@@ -1,0 +1,194 @@
+//Author: Nathaniel Thomas, 45132054, COMP202
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+//known data type struct
+typedef struct Assignment //57 bytes
+{
+	char summer;
+	unsigned char crowd;
+	float plant;
+	unsigned char elbow;
+	float reward;
+	int skirt;
+	char sea;
+	int flight;
+	char chicken;
+	short int soup;
+	unsigned char fly;
+	long int wash;
+	char mice[9];
+	double yak;
+	int clocks;
+	short int motion;
+	short int appliance;
+}Assignment;
+
+//unknown data type format
+typedef struct tmpAss
+{
+	short int summer;
+	short int crowd;
+	double plant;
+	int elbow;
+	double reward;
+	char skirt;
+	int sea;
+	char boolByte;
+	int fly;
+	int wash;
+	char mice[7];
+	float yak;
+	char clocks;
+	float motion;
+	char appliance;
+}tmpAss;
+
+//function which reads, converts and writes unknown data format into new data format
+void readWriteFile(tmpAss *tmp, Assignment *Ass, FILE *input_file, int nElements, FILE *output_file)
+{
+	for (int i = 0; i < nElements; i++)
+	{
+		fread(&tmp[i].summer, sizeof(tmp[i].summer), 1, input_file);
+		fread(&tmp[i].crowd, sizeof(tmp[i].crowd), 1, input_file);		
+		fread(&tmp[i].plant, sizeof(tmp[i].plant), 1, input_file);
+		fread(&tmp[i].elbow, sizeof(tmp[i].elbow), 1, input_file);
+		fread(&tmp[i].reward, sizeof(tmp[i].reward), 1, input_file);
+		fread(&tmp[i].skirt, sizeof(tmp[i].skirt), 1, input_file);
+		fread(&tmp[i].sea, sizeof(tmp[i].sea), 1, input_file);
+		fread(&tmp[i].boolByte, sizeof(tmp[i].boolByte), 1, input_file);
+		fread(&tmp[i].fly, sizeof(tmp[i].fly), 1, input_file);
+		fread(&tmp[i].wash, sizeof(tmp[i].wash), 1, input_file);
+		fread(&tmp[i].mice, sizeof(tmp[i].mice), 1, input_file);
+		fread(&tmp[i].yak, sizeof(tmp[i].yak), 1, input_file);
+		fread(&tmp[i].clocks, sizeof(tmp[i].clocks), 1, input_file);
+		fread(&tmp[i].motion, sizeof(tmp[i].motion), 1, input_file);
+		fread(&tmp[i].appliance, sizeof(tmp[i].appliance), 1, input_file);
+		
+		//conversion
+		Ass[i].summer = (char)tmp[i].summer;
+		Ass[i].crowd = (unsigned char)tmp[i].crowd;
+		Ass[i].plant = (float)tmp[i].plant;
+		Ass[i].elbow = (unsigned char)tmp[i].elbow;
+		Ass[i].reward = (float)tmp[i].reward;
+		Ass[i].skirt = (int)tmp[i].skirt;
+		Ass[i].sea = (char)tmp[i].sea;
+		
+		//bitwise operations for boolean data type
+		Ass[i].flight = (int)((tmp[i].boolByte>>0) & 1);
+		Ass[i].chicken = (char)((tmp[i].boolByte>>5) & 1);
+		Ass[i].soup = (short int)((tmp[i].boolByte>>7) & 1);
+		
+		Ass[i].fly = (unsigned char)tmp[i].fly;
+		Ass[i].wash = (long int)tmp[i].wash;
+		strcpy(Ass[i].mice,tmp[i].mice);
+		Ass[i].yak = (double)tmp[i].yak;
+		Ass[i].clocks = (int)tmp[i].clocks;
+		Ass[i].motion = (short int)tmp[i].motion;
+		Ass[i].appliance = (short int)tmp[i].appliance;
+		
+		fwrite(&Ass[i].summer, sizeof(Ass[i].summer), 1, output_file);	
+		fwrite(&Ass[i].crowd, sizeof(Ass[i].crowd), 1, output_file);
+		fwrite(&Ass[i].plant, sizeof(Ass[i].plant), 1, output_file);
+		fwrite(&Ass[i].elbow, sizeof(Ass[i].elbow), 1, output_file);
+		fwrite(&Ass[i].reward, sizeof(Ass[i].reward), 1, output_file);
+		fwrite(&Ass[i].skirt, sizeof(Ass[i].skirt), 1, output_file);
+		fwrite(&Ass[i].sea, sizeof(Ass[i].sea), 1, output_file);
+		fwrite(&Ass[i].flight, sizeof(Ass[i].flight), 1, output_file);
+		fwrite(&Ass[i].chicken, sizeof(Ass[i].chicken), 1, output_file);
+		fwrite(&Ass[i].soup, sizeof(Ass[i].soup), 1, output_file);
+		fwrite(&Ass[i].fly, sizeof(Ass[i].fly), 1, output_file);
+		fwrite(&Ass[i].wash, sizeof(Ass[i].wash), 1, output_file);
+		fwrite(&Ass[i].mice, sizeof(Ass[i].mice), 1, output_file);
+		fwrite(&Ass[i].yak, sizeof(Ass[i].yak), 1, output_file);
+		fwrite(&Ass[i].clocks, sizeof(Ass[i].clocks), 1, output_file);
+		fwrite(&Ass[i].motion, sizeof(Ass[i].motion), 1, output_file);
+		fwrite(&Ass[i].appliance, sizeof(Ass[i].appliance), 1, output_file);
+	}
+}
+
+void errorCheck(int argument)
+{
+	if (argument < 3)
+	{
+		fprintf(stderr, "error: input or output filename not provided\n");
+		exit(1);
+	}
+	
+	if (argument > 3) 
+	{
+		fprintf(stderr, "error: program accepts three arguments max\n");
+        exit(2);
+    }
+}
+
+//get filesize including padding
+int getFileSize(FILE *input_file)
+{
+	fseek(input_file, 0, SEEK_END);
+	int fileSize = ftell(input_file);
+	fseek(input_file, 0, SEEK_SET);
+	return fileSize;
+}
+
+//print struct field data
+void printFile(Assignment* Ass, FILE *input_file, int nElements)
+{
+	for (int i = 0; i < nElements; i++)
+	{
+		printf("%c, ", Ass[i].summer);		
+		printf("%d, ", Ass[i].crowd);		
+		printf("%f, ", Ass[i].plant);
+		printf("%d, ", Ass[i].elbow);
+		printf("%f, ", Ass[i].reward);
+		printf("%x, ", Ass[i].skirt);
+		printf("%d, ", Ass[i].sea);
+		printf("%d, ", Ass[i].flight);
+		printf("%u, ", Ass[i].chicken);
+		printf("%d, ", Ass[i].soup);
+		printf("%d, ", Ass[i].fly);
+		printf("%ld, ", Ass[i].wash);
+		printf("%s, ", Ass[i].mice);
+		printf("%f, ", Ass[i].yak);
+		printf("%d, ", Ass[i].clocks);
+		printf("%d, ", Ass[i].motion);
+		printf("%d \n", Ass[i].appliance);
+	}
+}
+
+int main(int argc, char **argv)
+{
+	int structSize = 57;
+	int tmpSize = 55;
+	Assignment *Ass;
+	tmpAss *tmp;
+	FILE *input_file;
+	FILE *output_file;
+	
+	errorCheck(argc);
+	
+	input_file = fopen(argv[1], "rb");
+	output_file = fopen(argv[2], "wb");
+	
+	if (input_file == NULL)
+	{
+		fprintf(stderr, "input file %s does not exist/n", argv[1]);
+		exit(3);
+	}
+	
+	int fileSize = getFileSize(input_file);
+	int nElements = fileSize/tmpSize;
+
+
+	Ass = malloc(nElements * sizeof(Assignment));
+	tmp = malloc(nElements * sizeof(tmpAss));
+	readWriteFile(tmp, Ass, input_file, nElements, output_file);
+	printFile(Ass, input_file, nElements);
+	
+	free(Ass);
+	free(tmp);
+	fclose(input_file);
+	fclose(output_file);
+	return 0;
+}
